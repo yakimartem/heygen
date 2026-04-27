@@ -1,10 +1,33 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
+    <title>NodePlay — промо панели</title>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
+      /* Self-hosted Montserrat (variable woff2, latin + cyrillic) for deterministic rendering. */
+      @font-face {
+        font-family: "Montserrat";
+        src: url("assets/fonts/montserrat-cyrillic.woff2") format("woff2-variations"),
+          url("assets/fonts/montserrat-cyrillic.woff2") format("woff2");
+        font-weight: 300 800;
+        font-style: normal;
+        font-display: block;
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+      }
+      @font-face {
+        font-family: "Montserrat";
+        src: url("assets/fonts/montserrat-latin.woff2") format("woff2-variations"),
+          url("assets/fonts/montserrat-latin.woff2") format("woff2");
+        font-weight: 300 800;
+        font-style: normal;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC,
+          U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -12,40 +35,710 @@
       }
       html,
       body {
-        margin: 0;
         width: 1920px;
         height: 1080px;
         overflow: hidden;
-        background: #000;
+        font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #19191b;
+        color: #fff;
+      }
+
+      /* Soft ambient accent glow that lives across all phases */
+      .ambient {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(60% 50% at 75% 18%, rgba(109, 40, 217, 0.28) 0%, transparent 70%),
+          radial-gradient(45% 40% at 18% 90%, rgba(109, 40, 217, 0.18) 0%, transparent 75%);
+        will-change: opacity;
+      }
+
+      /* ================ INTRO ================ */
+      .intro {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        will-change: opacity;
+      }
+      .intro-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 56px;
+        transform-origin: center center;
+      }
+      .intro-logo {
+        width: 520px;
+        height: auto;
+        will-change: transform, opacity;
+      }
+      .intro-tagline {
+        font-size: 88px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .intro-tagline .word {
+        display: inline-block;
+        will-change: transform, opacity;
+        margin: 0 14px;
+      }
+      .intro-tagline .word.accent {
+        color: #ffffff;
+        background: linear-gradient(180deg, #ffffff 0%, #c9b9ff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .intro-sub {
+        font-size: 30px;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        color: rgba(255, 255, 255, 0.6);
+        text-align: center;
+      }
+      .intro-sub .chunk {
+        display: inline-block;
+        will-change: transform, opacity;
+        margin: 0 8px;
+      }
+      .intro-pill {
+        display: inline-block;
+        padding: 14px 30px;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: #b69cff;
+        background: rgba(109, 40, 217, 0.12);
+        border: 1px solid rgba(109, 40, 217, 0.45);
+        border-radius: 999px;
+        will-change: transform, opacity;
+      }
+
+      /* Wipe sweep that reveals the intro band */
+      .sweep {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          120deg,
+          transparent 0%,
+          transparent 40%,
+          rgba(109, 40, 217, 0.6) 50%,
+          transparent 60%,
+          transparent 100%
+        );
+        mix-blend-mode: screen;
+        will-change: transform, opacity;
+        pointer-events: none;
+      }
+
+      /* ================ DASHBOARD SCENES (main + server) ================ */
+      .scene {
+        position: absolute;
+        inset: 0;
+        will-change: opacity, transform;
+      }
+      .scene .canvas {
+        position: absolute;
+        left: 3px;
+        top: 113px;
+        width: 1914px;
+        height: 855px;
+        will-change: transform, opacity;
+      }
+
+      /* Static SVG behind the regions so masked seams blend perfectly */
+      .scene .canvas .background {
+        position: absolute;
+        inset: 0;
+        background-color: #19191b;
+        background-repeat: no-repeat;
+        background-size: 1914px 855px;
+        background-position: 0 0;
+      }
+
+      /* Soft drop-shadow ground plate beneath the dashboard */
+      .scene .ground {
+        position: absolute;
+        left: 50%;
+        bottom: 70px;
+        width: 1700px;
+        height: 80px;
+        transform: translateX(-50%);
+        background: radial-gradient(50% 100% at 50% 0%, rgba(109, 40, 217, 0.35) 0%, transparent 70%);
+        filter: blur(0);
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      /* Each animated piece of the dashboard is a region cut from the SVG via background-position */
+      .region {
+        position: absolute;
+        background-repeat: no-repeat;
+        background-size: 1914px 855px;
+        will-change: transform, opacity;
+        transform-origin: center center;
+      }
+      .scene-main .region,
+      .scene-main .background {
+        background-image: url("assets/images/main.svg");
+      }
+      .scene-server .region,
+      .scene-server .background {
+        background-image: url("assets/images/server-overview.svg");
+      }
+
+      /* Caption overlay shown as a lower-third title for each scene */
+      .scene-caption {
+        position: absolute;
+        left: 80px;
+        bottom: 64px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        will-change: transform, opacity;
+        z-index: 5;
+      }
+      .scene-caption .kicker {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.5em;
+        text-transform: uppercase;
+        color: #b69cff;
+      }
+      .scene-caption .title {
+        font-size: 38px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: #fff;
+        text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Tiny outro */
+      .outro {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        will-change: opacity;
+      }
+      .outro-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        will-change: transform, opacity;
+      }
+      .outro img {
+        width: 360px;
+        height: auto;
+      }
+      .outro-text {
+        font-size: 28px;
+        font-weight: 500;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.7);
       }
     </style>
   </head>
   <body>
     <div
       id="root"
-      data-composition-id="main"
+      data-composition-id="root"
       data-start="0"
-      data-duration="10"
+      data-duration="26"
       data-width="1920"
       data-height="1080"
     >
-      
-      
+      <!-- Ambient accent glow always present -->
+      <div
+        id="ambient"
+        class="ambient clip"
+        data-start="0"
+        data-duration="26"
+        data-track-index="0"
+      ></div>
 
-      <!--
-        Add your clips here. Example:
-        <div id="title" class="clip" data-start="0" data-duration="5" data-track-index="1"
-             style="font-size: 64px; color: #fff; padding: 40px">
-          Hello World
+      <!-- ============ INTRO (0 - 6.5s) ============ -->
+      <div
+        id="intro"
+        class="intro clip"
+        data-start="0"
+        data-duration="6.5"
+        data-track-index="1"
+      >
+        <div class="intro-stack" id="introStack">
+          <span class="intro-pill" id="introPill">Game server hosting</span>
+          <img
+            class="intro-logo"
+            id="introLogo"
+            src="assets/images/logo.png"
+            alt="NodePlay"
+          />
+          <div class="intro-tagline" id="introTagline">
+            <span class="word" id="introW1">Запусти</span>
+            <span class="word accent" id="introW2">свой&nbsp;сервер</span>
+            <span class="word" id="introW3">за&nbsp;минуту.</span>
+          </div>
+          <div class="intro-sub" id="introSub">
+            <span class="chunk" id="introS1">Просто.</span>
+            <span class="chunk" id="introS2">Быстро.</span>
+            <span class="chunk" id="introS3">Надёжно.</span>
+          </div>
         </div>
-      -->
+        <div class="sweep" id="sweep"></div>
+      </div>
+
+      <!-- ============ MAIN SCREEN (6.0 - 16.0s) ============ -->
+      <div
+        id="sceneMain"
+        class="scene scene-main clip"
+        data-start="6"
+        data-duration="10"
+        data-track-index="2"
+      >
+        <div class="canvas" id="mainCanvas">
+          <div class="ground" id="mainGround"></div>
+          <div class="background" id="mainBg"></div>
+          <!-- Header strip (full width) -->
+          <div
+            class="region"
+            id="m_header"
+            style="left: 0; top: 0; width: 1914px; height: 64px; background-position: 0 0;"
+          ></div>
+          <!-- "Мои активные серверы (1/11)" title -->
+          <div
+            class="region"
+            id="m_title"
+            style="left: 115px; top: 75px; width: 460px; height: 32px; background-position: -115px -75px;"
+          ></div>
+          <!-- Eclipse Balance hero card -->
+          <div
+            class="region"
+            id="m_card"
+            style="left: 150px; top: 130px; width: 940px; height: 200px; background-position: -150px -130px;"
+          ></div>
+          <!-- Развернуть placeholder -->
+          <div
+            class="region"
+            id="m_placeholder"
+            style="left: 150px; top: 350px; width: 310px; height: 175px; background-position: -150px -350px;"
+          ></div>
+          <!-- "Запустить игровой сервер" + Создать сервер row -->
+          <div
+            class="region"
+            id="m_section"
+            style="left: 115px; top: 545px; width: 970px; height: 60px; background-position: -115px -545px;"
+          ></div>
+          <!-- Game grid (6 cards) -->
+          <div
+            class="region"
+            id="m_games"
+            style="left: 150px; top: 615px; width: 940px; height: 240px; background-position: -150px -615px;"
+          ></div>
+          <!-- Right sidebar: Сохранённые экземпляры серверов -->
+          <div
+            class="region"
+            id="m_right_title"
+            style="left: 1115px; top: 75px; width: 380px; height: 32px; background-position: -1115px -75px;"
+          ></div>
+          <div
+            class="region"
+            id="m_right_card"
+            style="left: 1115px; top: 130px; width: 305px; height: 200px; background-position: -1115px -130px;"
+          ></div>
+          <!-- Bottom-right NodePlay logo -->
+          <div
+            class="region"
+            id="m_logo"
+            style="left: 1810px; top: 805px; width: 75px; height: 50px; background-position: -1810px -805px;"
+          ></div>
+        </div>
+        <div class="scene-caption" id="mainCaption">
+          <span class="kicker">01 — Главный экран</span>
+          <span class="title">Все серверы под рукой</span>
+        </div>
+      </div>
+
+      <!-- ============ SERVER OVERVIEW (16.0 - 26.0s) ============ -->
+      <div
+        id="sceneServer"
+        class="scene scene-server clip"
+        data-start="16"
+        data-duration="10"
+        data-track-index="3"
+      >
+        <div class="canvas" id="serverCanvas">
+          <div class="ground" id="serverGround"></div>
+          <div class="background" id="serverBg"></div>
+          <!-- Header strip -->
+          <div
+            class="region"
+            id="s_header"
+            style="left: 0; top: 0; width: 1914px; height: 64px; background-position: 0 0;"
+          ></div>
+          <!-- Stats bar across top of content area (ОЗУ / ЦПУ / ДИСК / ВХ-ИСХ) -->
+          <div
+            class="region"
+            id="s_stats"
+            style="left: 390px; top: 64px; width: 1180px; height: 50px; background-position: -390px -64px;"
+          ></div>
+          <!-- Left sidebar: nav -->
+          <div
+            class="region"
+            id="s_nav"
+            style="left: 155px; top: 110px; width: 215px; height: 480px; background-position: -155px -110px;"
+          ></div>
+          <!-- Plan card bottom-left -->
+          <div
+            class="region"
+            id="s_plan"
+            style="left: 165px; top: 605px; width: 205px; height: 100px; background-position: -165px -605px;"
+          ></div>
+          <!-- Server header bar (Barotrauma) -->
+          <div
+            class="region"
+            id="s_serverbar"
+            style="left: 390px; top: 120px; width: 985px; height: 64px; background-position: -390px -120px;"
+          ></div>
+          <!-- "Обзор" title + description -->
+          <div
+            class="region"
+            id="s_obzor"
+            style="left: 390px; top: 195px; width: 985px; height: 60px; background-position: -390px -195px;"
+          ></div>
+          <!-- Information panel (left card) -->
+          <div
+            class="region"
+            id="s_info"
+            style="left: 390px; top: 260px; width: 470px; height: 295px; background-position: -390px -260px;"
+          ></div>
+          <!-- Performance chart panel (right card) -->
+          <div
+            class="region"
+            id="s_perf"
+            style="left: 875px; top: 260px; width: 500px; height: 295px; background-position: -875px -260px;"
+          ></div>
+          <!-- Аналитика сервера header -->
+          <div
+            class="region"
+            id="s_analytics_title"
+            style="left: 390px; top: 580px; width: 380px; height: 50px; background-position: -390px -580px;"
+          ></div>
+          <!-- Six metric cards (Всего сессий / Уникальных игроков / ...) -->
+          <div
+            class="region"
+            id="s_metrics"
+            style="left: 390px; top: 640px; width: 985px; height: 215px; background-position: -390px -640px;"
+          ></div>
+          <!-- Bottom-right NodePlay logo -->
+          <div
+            class="region"
+            id="s_logo"
+            style="left: 1810px; top: 805px; width: 75px; height: 50px; background-position: -1810px -805px;"
+          ></div>
+        </div>
+        <div class="scene-caption" id="serverCaption">
+          <span class="kicker">02 — Управление сервером</span>
+          <span class="title">Контроль до мелочей</span>
+        </div>
+      </div>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.from("#title", { opacity: 0, y: -50, duration: 1 }, 0);
-      window.__timelines["main"] = tl;
+      // Fluent-decelerate easing — smooth landing motion à la Microsoft Designer.
+      const FLUENT = "cubic-bezier(0.16, 1, 0.3, 1)";
+
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: { ease: FLUENT },
+      });
+
+      // Ambient glow fades in, then gently breathes throughout the rest of the video.
+      tl.fromTo(
+        "#ambient",
+        { opacity: 0 },
+        { opacity: 1, duration: 1.2, ease: "sine.out" },
+        0,
+      );
+      tl.to(
+        "#ambient",
+        { opacity: 0.7, duration: 11, ease: "sine.inOut", yoyo: true, repeat: 1 },
+        1.5,
+      );
+
+      // ===================== INTRO (0 - 6.5s) =====================
+      tl.set(["#introPill", "#introLogo", "#introW1", "#introW2", "#introW3", "#introS1", "#introS2", "#introS3"], { opacity: 0 });
+
+      // Logo drops gracefully into place
+      tl.fromTo(
+        "#introLogo",
+        { opacity: 0, y: -120, scale: 0.78, rotation: -4 },
+        { opacity: 1, y: 0, scale: 1, rotation: 0, duration: 1.2 },
+        0.3,
+      );
+      // Pill kicker fades in just under the logo
+      tl.fromTo(
+        "#introPill",
+        { opacity: 0, y: -30, scale: 0.9 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8 },
+        0.15,
+      );
+
+      // Tagline word stagger
+      tl.fromTo(
+        "#introW1",
+        { opacity: 0, y: 60, scale: 0.85 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.9 },
+        1.2,
+      );
+      tl.fromTo(
+        "#introW2",
+        { opacity: 0, y: 60, scale: 0.85 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.9 },
+        1.4,
+      );
+      tl.fromTo(
+        "#introW3",
+        { opacity: 0, y: 60, scale: 0.85 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.9 },
+        1.6,
+      );
+
+      // Subtitle chunks stagger
+      tl.fromTo(
+        "#introS1",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7 },
+        2.6,
+      );
+      tl.fromTo(
+        "#introS2",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7 },
+        2.75,
+      );
+      tl.fromTo(
+        "#introS3",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7 },
+        2.9,
+      );
+
+      // Sweep wipe — accent flash across the intro
+      tl.fromTo(
+        "#sweep",
+        { opacity: 0, x: -1920 },
+        { opacity: 0.65, x: 0, duration: 1.2, ease: "power2.inOut" },
+        3.5,
+      );
+      tl.to(
+        "#sweep",
+        { opacity: 0, x: 1920, duration: 1.0, ease: "power2.inOut" },
+        4.7,
+      );
+
+      // Intro exit — whole stack scales up & fades out
+      tl.to(
+        "#introStack",
+        { opacity: 0, scale: 1.05, y: -40, duration: 0.9, ease: "power2.in" },
+        5.6,
+      );
+
+      // ===================== MAIN SCREEN (6.0 - 16.0s) =====================
+      const MAIN_REGIONS = [
+        { id: "#m_header", x: 0, y: -40 },
+        { id: "#m_title", x: -40, y: 0 },
+        { id: "#m_card", x: 0, y: 60 },
+        { id: "#m_placeholder", x: -40, y: 30 },
+        { id: "#m_section", x: 0, y: 50 },
+        { id: "#m_games", x: 0, y: 80 },
+        { id: "#m_right_title", x: 40, y: 0 },
+        { id: "#m_right_card", x: 60, y: 30 },
+        { id: "#m_logo", x: 0, y: 30 },
+      ];
+
+      // Pre-hide everything in the main scene so it can drop in
+      tl.set(
+        MAIN_REGIONS.map((r) => r.id).concat(["#mainBg", "#mainGround", "#mainCaption"]),
+        { opacity: 0 },
+      );
+
+      // Full canvas initial perspective swing-in, sets the stage
+      tl.fromTo(
+        "#mainCanvas",
+        { opacity: 0, scale: 1.06, y: 30 },
+        { opacity: 1, scale: 1, y: 0, duration: 1.0 },
+        6.0,
+      );
+      tl.fromTo(
+        "#mainBg",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8, ease: "sine.out" },
+        6.2,
+      );
+      tl.fromTo(
+        "#mainGround",
+        { opacity: 0, scale: 0.6 },
+        { opacity: 0.7, scale: 1, duration: 1.2 },
+        6.3,
+      );
+
+      // Caption slides in from the left
+      tl.fromTo(
+        "#mainCaption",
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 0.9 },
+        6.0,
+      );
+
+      // Stagger drop-in for each region (Microsoft Designer style: y/x/scale + opacity)
+      MAIN_REGIONS.forEach((r, i) => {
+        tl.fromTo(
+          r.id,
+          {
+            opacity: 0,
+            x: r.x,
+            y: r.y,
+            scale: 0.92,
+            rotation: r.x < 0 ? -1.5 : r.x > 0 ? 1.5 : 0,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+            duration: 0.85,
+          },
+          6.5 + i * 0.12,
+        );
+      });
+
+      // Idle drift on the canvas during the hold — keeps the frame alive without
+      // overlapping the exit tween below.
+      tl.fromTo(
+        "#mainCanvas",
+        { y: 0 },
+        { y: -8, duration: 2.5, ease: "sine.inOut", yoyo: true, repeat: 1 },
+        9.5,
+      );
+
+      // Caption swap fades out before scene exit (with hard kill afterwards)
+      tl.to(
+        "#mainCaption",
+        { opacity: 0, x: -40, duration: 0.6 },
+        14.7,
+      );
+      tl.set("#mainCaption", { opacity: 0, visibility: "hidden" }, 15.3);
+
+      // Whole main scene exits — slides up & dims
+      tl.to(
+        "#mainCanvas",
+        { opacity: 0, scale: 0.96, y: -40, duration: 0.9, ease: "power2.in" },
+        15.0,
+      );
+
+      // ===================== SERVER OVERVIEW (16.0 - 26.0s) =====================
+      const SERVER_REGIONS = [
+        { id: "#s_header", x: 0, y: -40 },
+        { id: "#s_stats", x: 0, y: -25 },
+        { id: "#s_nav", x: -50, y: 0 },
+        { id: "#s_plan", x: -50, y: 30 },
+        { id: "#s_serverbar", x: 0, y: -30 },
+        { id: "#s_obzor", x: -30, y: 20 },
+        { id: "#s_info", x: -40, y: 50 },
+        { id: "#s_perf", x: 40, y: 50 },
+        { id: "#s_analytics_title", x: -30, y: 30 },
+        { id: "#s_metrics", x: 0, y: 60 },
+        { id: "#s_logo", x: 30, y: 30 },
+      ];
+
+      tl.set(
+        SERVER_REGIONS.map((r) => r.id).concat(["#serverBg", "#serverGround", "#serverCaption"]),
+        { opacity: 0 },
+      );
+
+      tl.fromTo(
+        "#serverCanvas",
+        { opacity: 0, scale: 1.06, y: 30 },
+        { opacity: 1, scale: 1, y: 0, duration: 1.0 },
+        16.0,
+      );
+      tl.fromTo(
+        "#serverBg",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8, ease: "sine.out" },
+        16.2,
+      );
+      tl.fromTo(
+        "#serverGround",
+        { opacity: 0, scale: 0.6 },
+        { opacity: 0.7, scale: 1, duration: 1.2 },
+        16.3,
+      );
+      tl.fromTo(
+        "#serverCaption",
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 0.9 },
+        16.0,
+      );
+
+      SERVER_REGIONS.forEach((r, i) => {
+        tl.fromTo(
+          r.id,
+          {
+            opacity: 0,
+            x: r.x,
+            y: r.y,
+            scale: 0.92,
+            rotation: r.x < 0 ? -1.5 : r.x > 0 ? 1.5 : 0,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+            duration: 0.85,
+          },
+          16.5 + i * 0.11,
+        );
+      });
+
+      // Idle drift on server canvas during the hold (ends before the outro tween starts).
+      tl.fromTo(
+        "#serverCanvas",
+        { y: 0 },
+        { y: -8, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: 1 },
+        19.5,
+      );
+
+      // Outro polish — caption fades, scene gently drifts up at the end
+      tl.to(
+        "#serverCaption",
+        { opacity: 0, x: -40, duration: 0.6 },
+        24.6,
+      );
+      tl.set("#serverCaption", { opacity: 0, visibility: "hidden" }, 25.2);
+      tl.to(
+        "#serverCanvas",
+        { scale: 1.02, y: -16, duration: 1.2, ease: "power2.in" },
+        24.6,
+      );
+
+      window.__timelines["root"] = tl;
     </script>
   </body>
 </html>
