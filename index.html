@@ -1,9 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
+    <title>Привет, я готов</title>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=block"
+      rel="stylesheet"
+    />
     <style>
       * {
         margin: 0;
@@ -12,11 +19,179 @@
       }
       html,
       body {
-        margin: 0;
         width: 1920px;
         height: 1080px;
         overflow: hidden;
-        background: #000;
+        font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0b0420;
+      }
+
+      /* Vibrant base gradient */
+      .stage {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 30% 20%, #2a1968 0%, #0b0420 60%),
+          linear-gradient(135deg, #0b0420 0%, #1b0a4a 50%, #061029 100%);
+        overflow: hidden;
+      }
+
+      /* Floating colorful blobs that drive the glass blur */
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.85;
+        will-change: transform;
+        mix-blend-mode: screen;
+      }
+      .blob-1 {
+        width: 900px;
+        height: 900px;
+        left: -120px;
+        top: -180px;
+        background: radial-gradient(circle, #ff5cf2 0%, #b026ff 60%, transparent 75%);
+      }
+      .blob-2 {
+        width: 1100px;
+        height: 1100px;
+        right: -240px;
+        top: 100px;
+        background: radial-gradient(circle, #00d4ff 0%, #1a73ff 55%, transparent 75%);
+      }
+      .blob-3 {
+        width: 800px;
+        height: 800px;
+        left: 30%;
+        bottom: -260px;
+        background: radial-gradient(circle, #ffb43d 0%, #ff3d8a 55%, transparent 75%);
+      }
+      .blob-4 {
+        width: 700px;
+        height: 700px;
+        right: 18%;
+        bottom: -180px;
+        background: radial-gradient(circle, #6cffd5 0%, #2cd5a4 55%, transparent 75%);
+      }
+
+      /* Subtle film grain / noise via SVG data-URI */
+      .grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.06;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      }
+
+      /* Frosted glass card */
+      .glass {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 1400px;
+        padding: 110px 140px;
+        border-radius: 56px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.18) 0%,
+          rgba(255, 255, 255, 0.06) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        box-shadow:
+          0 30px 80px rgba(8, 4, 32, 0.55),
+          inset 0 1px 0 rgba(255, 255, 255, 0.35),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(28px) saturate(160%);
+        -webkit-backdrop-filter: blur(28px) saturate(160%);
+        text-align: center;
+        will-change: transform, opacity;
+      }
+      .glass::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 56px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.35) 0%,
+          rgba(255, 255, 255, 0) 35%,
+          rgba(255, 255, 255, 0) 65%,
+          rgba(255, 255, 255, 0.18) 100%
+        );
+        pointer-events: none;
+        mix-blend-mode: overlay;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: 0.45em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.78);
+        padding: 14px 28px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        margin-bottom: 38px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .heading {
+        font-size: 200px;
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: #fff;
+        text-shadow: 0 4px 40px rgba(255, 255, 255, 0.25);
+      }
+      .heading .word {
+        display: inline-block;
+        will-change: transform, opacity, filter;
+        background: linear-gradient(180deg, #ffffff 0%, #c9d6ff 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .heading .smile {
+        display: inline-block;
+        will-change: transform, opacity;
+        color: #ffd874;
+        -webkit-text-fill-color: #ffd874;
+        margin-left: 18px;
+      }
+      .heading .comma {
+        color: #ffffff;
+        -webkit-text-fill-color: #ffffff;
+        margin-right: 24px;
+      }
+
+      .sub {
+        margin-top: 44px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.78);
+        letter-spacing: 0.02em;
+      }
+
+      /* Sparkles */
+      .sparkle {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0) 70%);
+        will-change: transform, opacity;
+        opacity: 0;
+      }
+
+      /* Vignette */
+      .vignette {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
       }
     </style>
   </head>
@@ -25,26 +200,205 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="10"
+      data-duration="7"
       data-width="1920"
       data-height="1080"
     >
-      
-      
+      <div
+        id="stage"
+        class="stage clip"
+        data-start="0"
+        data-duration="7"
+        data-track-index="1"
+      >
+        <div class="blob blob-1" id="blob1"></div>
+        <div class="blob blob-2" id="blob2"></div>
+        <div class="blob blob-3" id="blob3"></div>
+        <div class="blob blob-4" id="blob4"></div>
+        <div class="grain"></div>
 
-      <!--
-        Add your clips here. Example:
-        <div id="title" class="clip" data-start="0" data-duration="5" data-track-index="1"
-             style="font-size: 64px; color: #fff; padding: 40px">
-          Hello World
+        <div class="sparkle" id="s1" style="left: 18%; top: 22%"></div>
+        <div class="sparkle" id="s2" style="left: 82%; top: 30%"></div>
+        <div class="sparkle" id="s3" style="left: 24%; top: 78%"></div>
+        <div class="sparkle" id="s4" style="left: 76%; top: 72%"></div>
+        <div class="sparkle" id="s5" style="left: 50%; top: 14%"></div>
+        <div class="sparkle" id="s6" style="left: 12%; top: 50%"></div>
+        <div class="sparkle" id="s7" style="left: 88%; top: 52%"></div>
+        <div class="sparkle" id="s8" style="left: 50%; top: 88%"></div>
+
+        <div class="glass" id="card">
+          <span class="eyebrow" id="eyebrow">HyperFrames · HeyGen</span>
+          <div class="heading">
+            <span class="word" id="w1">Привет</span><span class="comma" id="comma">,</span>
+            <span class="word" id="w2">я</span>
+            <span class="word" id="w3">готов</span>
+            <span class="smile" id="smile">:)</span>
+          </div>
+          <div class="sub" id="sub">Glassmorphism greeting · powered by GSAP</div>
         </div>
-      -->
+
+        <div class="vignette"></div>
+      </div>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.from("#title", { opacity: 0, y: -50, duration: 1 }, 0);
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+
+      // --- Background blobs: continuous gentle drifting (deterministic loop) ---
+      tl.fromTo(
+        "#blob1",
+        { x: 0, y: 0, scale: 1 },
+        { x: 180, y: 120, scale: 1.15, duration: 7, ease: "sine.inOut" },
+        0,
+      );
+      tl.fromTo(
+        "#blob2",
+        { x: 0, y: 0, scale: 1 },
+        { x: -220, y: 90, scale: 1.1, duration: 7, ease: "sine.inOut" },
+        0,
+      );
+      tl.fromTo(
+        "#blob3",
+        { x: 0, y: 0, scale: 1 },
+        { x: 140, y: -160, scale: 1.2, duration: 7, ease: "sine.inOut" },
+        0,
+      );
+      tl.fromTo(
+        "#blob4",
+        { x: 0, y: 0, scale: 1 },
+        { x: -160, y: -120, scale: 1.08, duration: 7, ease: "sine.inOut" },
+        0,
+      );
+
+      // --- Glass card entrance ---
+      tl.fromTo(
+        "#card",
+        {
+          opacity: 0,
+          scale: 0.82,
+          y: 80,
+          filter: "blur(24px)",
+          rotate: -2,
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: "blur(0px)",
+          rotate: 0,
+          duration: 1.4,
+          ease: "expo.out",
+        },
+        0.15,
+      );
+
+      // Idle float on the card
+      tl.to(
+        "#card",
+        {
+          y: -14,
+          duration: 3,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: 1,
+        },
+        1.6,
+      );
+
+      // --- Eyebrow chip ---
+      tl.fromTo(
+        "#eyebrow",
+        { opacity: 0, y: -20, letterSpacing: "0.7em" },
+        { opacity: 1, y: 0, letterSpacing: "0.45em", duration: 1.0 },
+        0.6,
+      );
+
+      // --- Words stagger ---
+      const words = ["#w1", "#comma", "#w2", "#w3"];
+      words.forEach((sel, i) => {
+        tl.fromTo(
+          sel,
+          { opacity: 0, y: 80, scale: 0.6, filter: "blur(18px)" },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 0.9,
+            ease: "back.out(1.6)",
+          },
+          0.85 + i * 0.18,
+        );
+      });
+
+      // --- Smile :) bounce in last ---
+      tl.fromTo(
+        "#smile",
+        { opacity: 0, scale: 0.2, rotate: -25, y: -30 },
+        {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          y: 0,
+          duration: 0.9,
+          ease: "elastic.out(1, 0.55)",
+        },
+        1.85,
+      );
+      tl.to(
+        "#smile",
+        {
+          rotate: 8,
+          duration: 0.9,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: 1,
+        },
+        2.9,
+      );
+
+      // --- Subtitle ---
+      tl.fromTo(
+        "#sub",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.9 },
+        2.0,
+      );
+
+      // --- Sparkles: gentle twinkle ---
+      const sparkles = ["#s1", "#s2", "#s3", "#s4", "#s5", "#s6", "#s7", "#s8"];
+      sparkles.forEach((sel, i) => {
+        const start = 0.3 + (i % 4) * 0.25;
+        tl.fromTo(
+          sel,
+          { opacity: 0, scale: 0.4 },
+          {
+            opacity: 0.9,
+            scale: 1.6,
+            duration: 1.2,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: 3,
+          },
+          start,
+        );
+      });
+
+      // --- Final emphasis pulse on the card ---
+      tl.to(
+        "#card",
+        {
+          boxShadow:
+            "0 30px 80px rgba(8, 4, 32, 0.55), 0 0 120px rgba(124, 92, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+          duration: 1.2,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: 1,
+        },
+        4.4,
+      );
+
       window.__timelines["main"] = tl;
     </script>
   </body>
