@@ -155,14 +155,21 @@
         will-change: transform, opacity;
       }
 
-      /* Static SVG behind the regions so masked seams blend perfectly */
-      .scene .canvas .background {
+      /* Empty host — the blank dashboard canvas that pieces assemble onto */
+      .scene .canvas .host {
         position: absolute;
         inset: 0;
-        background-color: #19191b;
-        background-repeat: no-repeat;
-        background-size: 1914px 855px;
-        background-position: 0 0;
+        background-color: #1e2227;
+        box-shadow: 0 60px 120px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+      }
+      /* Header strip portion of the host (slightly lighter bar, matching SVG header) */
+      .scene .canvas .host-header {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1914px;
+        height: 64px;
+        background-color: #23272e;
       }
 
       /* Soft drop-shadow ground plate beneath the dashboard */
@@ -187,12 +194,10 @@
         will-change: transform, opacity;
         transform-origin: center center;
       }
-      .scene-main .region,
-      .scene-main .background {
+      .scene-main .region {
         background-image: url("assets/images/main.svg");
       }
-      .scene-server .region,
-      .scene-server .background {
+      .scene-server .region {
         background-image: url("assets/images/server-overview.svg");
       }
 
@@ -309,14 +314,28 @@
       >
         <div class="canvas" id="mainCanvas">
           <div class="ground" id="mainGround"></div>
-          <div class="background" id="mainBg"></div>
-          <!-- Header strip (full width) -->
+          <!-- Empty host: dark dashboard frame + header strip — the UI lands onto this -->
+          <div class="host" id="mainHost"></div>
+          <div class="host-header" id="mainHostHeader"></div>
+          <!-- Header: left logo (PLAY) -->
           <div
             class="region"
-            id="m_header"
-            style="left: 0; top: 0; width: 1914px; height: 64px; background-position: 0 0;"
+            id="m_logo_brand"
+            style="left: 155px; top: 0; width: 190px; height: 64px; background-position: -155px 0;"
           ></div>
-          <!-- "Мои активные серверы (1/11)" title -->
+          <!-- Header: center search bar -->
+          <div
+            class="region"
+            id="m_search"
+            style="left: 540px; top: 0; width: 550px; height: 64px; background-position: -540px 0;"
+          ></div>
+          <!-- Header: right user chip -->
+          <div
+            class="region"
+            id="m_user"
+            style="left: 1540px; top: 0; width: 240px; height: 64px; background-position: -1540px 0;"
+          ></div>
+          <!-- Section label "Мои активные серверы (1/11)" -->
           <div
             class="region"
             id="m_title"
@@ -334,19 +353,50 @@
             id="m_placeholder"
             style="left: 150px; top: 350px; width: 310px; height: 175px; background-position: -150px -350px;"
           ></div>
-          <!-- "Запустить игровой сервер" + Создать сервер row -->
+          <!-- Section label "Запустить игровой сервер" -->
           <div
             class="region"
             id="m_section"
-            style="left: 115px; top: 545px; width: 970px; height: 60px; background-position: -115px -545px;"
+            style="left: 115px; top: 545px; width: 460px; height: 60px; background-position: -115px -545px;"
           ></div>
-          <!-- Game grid (6 cards) -->
+          <!-- Создать сервер CTA button -->
           <div
             class="region"
-            id="m_games"
-            style="left: 150px; top: 615px; width: 940px; height: 240px; background-position: -150px -615px;"
+            id="m_create"
+            style="left: 960px; top: 555px; width: 135px; height: 48px; background-position: -960px -555px;"
           ></div>
-          <!-- Right sidebar: Сохранённые экземпляры серверов -->
+          <!-- Six game tiles, each lands individually -->
+          <div
+            class="region"
+            id="m_game1"
+            style="left: 150px; top: 615px; width: 143px; height: 240px; background-position: -150px -615px;"
+          ></div>
+          <div
+            class="region"
+            id="m_game2"
+            style="left: 305px; top: 615px; width: 143px; height: 240px; background-position: -305px -615px;"
+          ></div>
+          <div
+            class="region"
+            id="m_game3"
+            style="left: 460px; top: 615px; width: 143px; height: 240px; background-position: -460px -615px;"
+          ></div>
+          <div
+            class="region"
+            id="m_game4"
+            style="left: 615px; top: 615px; width: 143px; height: 240px; background-position: -615px -615px;"
+          ></div>
+          <div
+            class="region"
+            id="m_game5"
+            style="left: 770px; top: 615px; width: 143px; height: 240px; background-position: -770px -615px;"
+          ></div>
+          <div
+            class="region"
+            id="m_game6"
+            style="left: 925px; top: 615px; width: 163px; height: 240px; background-position: -925px -615px;"
+          ></div>
+          <!-- Right sidebar: label + Нет серверов card -->
           <div
             class="region"
             id="m_right_title"
@@ -357,7 +407,7 @@
             id="m_right_card"
             style="left: 1115px; top: 130px; width: 305px; height: 200px; background-position: -1115px -130px;"
           ></div>
-          <!-- Bottom-right NodePlay logo -->
+          <!-- Bottom-right NodePlay watermark -->
           <div
             class="region"
             id="m_logo"
@@ -380,20 +430,49 @@
       >
         <div class="canvas" id="serverCanvas">
           <div class="ground" id="serverGround"></div>
-          <div class="background" id="serverBg"></div>
-          <!-- Header strip -->
+          <!-- Empty host: dark dashboard frame + header strip — the UI lands onto this -->
+          <div class="host" id="serverHost"></div>
+          <div class="host-header" id="serverHostHeader"></div>
+          <!-- Header: left logo -->
           <div
             class="region"
-            id="s_header"
-            style="left: 0; top: 0; width: 1914px; height: 64px; background-position: 0 0;"
+            id="s_logo_brand"
+            style="left: 155px; top: 0; width: 190px; height: 64px; background-position: -155px 0;"
           ></div>
-          <!-- Stats bar across top of content area (ОЗУ / ЦПУ / ДИСК / ВХ-ИСХ) -->
+          <!-- Header: center search -->
           <div
             class="region"
-            id="s_stats"
-            style="left: 390px; top: 64px; width: 1180px; height: 50px; background-position: -390px -64px;"
+            id="s_search"
+            style="left: 540px; top: 0; width: 550px; height: 64px; background-position: -540px 0;"
           ></div>
-          <!-- Left sidebar: nav -->
+          <!-- Header: right user chip -->
+          <div
+            class="region"
+            id="s_user"
+            style="left: 1540px; top: 0; width: 240px; height: 64px; background-position: -1540px 0;"
+          ></div>
+          <!-- Four top stats: ОЗУ / ЦПУ / ДИСК / network -->
+          <div
+            class="region"
+            id="s_stat1"
+            style="left: 395px; top: 64px; width: 260px; height: 50px; background-position: -395px -64px;"
+          ></div>
+          <div
+            class="region"
+            id="s_stat2"
+            style="left: 620px; top: 64px; width: 260px; height: 50px; background-position: -620px -64px;"
+          ></div>
+          <div
+            class="region"
+            id="s_stat3"
+            style="left: 850px; top: 64px; width: 240px; height: 50px; background-position: -850px -64px;"
+          ></div>
+          <div
+            class="region"
+            id="s_stat4"
+            style="left: 1085px; top: 64px; width: 310px; height: 50px; background-position: -1085px -64px;"
+          ></div>
+          <!-- Left sidebar: nav column -->
           <div
             class="region"
             id="s_nav"
@@ -435,11 +514,36 @@
             id="s_analytics_title"
             style="left: 390px; top: 580px; width: 380px; height: 50px; background-position: -390px -580px;"
           ></div>
-          <!-- Six metric cards (Всего сессий / Уникальных игроков / ...) -->
+          <!-- Six metric cards — each lands individually -->
           <div
             class="region"
-            id="s_metrics"
-            style="left: 390px; top: 640px; width: 985px; height: 215px; background-position: -390px -640px;"
+            id="s_metric1"
+            style="left: 390px; top: 640px; width: 160px; height: 215px; background-position: -390px -640px;"
+          ></div>
+          <div
+            class="region"
+            id="s_metric2"
+            style="left: 555px; top: 640px; width: 160px; height: 215px; background-position: -555px -640px;"
+          ></div>
+          <div
+            class="region"
+            id="s_metric3"
+            style="left: 720px; top: 640px; width: 160px; height: 215px; background-position: -720px -640px;"
+          ></div>
+          <div
+            class="region"
+            id="s_metric4"
+            style="left: 885px; top: 640px; width: 160px; height: 215px; background-position: -885px -640px;"
+          ></div>
+          <div
+            class="region"
+            id="s_metric5"
+            style="left: 1050px; top: 640px; width: 160px; height: 215px; background-position: -1050px -640px;"
+          ></div>
+          <div
+            class="region"
+            id="s_metric6"
+            style="left: 1215px; top: 640px; width: 160px; height: 215px; background-position: -1215px -640px;"
           ></div>
           <!-- Bottom-right NodePlay logo -->
           <div
@@ -558,37 +662,58 @@
       );
 
       // ===================== MAIN SCREEN (6.0 - 16.0s) =====================
+      // Each element lands onto the empty host individually — Microsoft Designer style.
+      // x/y = starting offset (drops in FROM that offset TO 0,0). Order = land order.
       const MAIN_REGIONS = [
-        { id: "#m_header", x: 0, y: -40 },
-        { id: "#m_title", x: -40, y: 0 },
-        { id: "#m_card", x: 0, y: 60 },
-        { id: "#m_placeholder", x: -40, y: 30 },
-        { id: "#m_section", x: 0, y: 50 },
-        { id: "#m_games", x: 0, y: 80 },
-        { id: "#m_right_title", x: 40, y: 0 },
-        { id: "#m_right_card", x: 60, y: 30 },
-        { id: "#m_logo", x: 0, y: 30 },
+        { id: "#m_logo_brand",   x: -40, y: -30 },
+        { id: "#m_search",       x:   0, y: -40 },
+        { id: "#m_user",         x:  40, y: -30 },
+        { id: "#m_title",        x: -50, y:   0 },
+        { id: "#m_right_title",  x:  50, y:   0 },
+        { id: "#m_card",         x: -20, y:  60 },
+        { id: "#m_right_card",   x:  50, y:  30 },
+        { id: "#m_placeholder",  x: -40, y:  40 },
+        { id: "#m_section",      x: -30, y:  40 },
+        { id: "#m_create",       x:  40, y:  20 },
+        { id: "#m_game1",        x: -20, y:  80 },
+        { id: "#m_game2",        x: -10, y:  80 },
+        { id: "#m_game3",        x:   0, y:  80 },
+        { id: "#m_game4",        x:   0, y:  80 },
+        { id: "#m_game5",        x:  10, y:  80 },
+        { id: "#m_game6",        x:  20, y:  80 },
+        { id: "#m_logo",         x:  30, y:  30 },
       ];
 
-      // Pre-hide everything in the main scene so it can drop in (anchored at t=0).
+      // Pre-hide all layers + host + caption at t=0 so the stage is empty.
       tl.set(
-        MAIN_REGIONS.map((r) => r.id).concat(["#mainBg", "#mainGround", "#mainCaption"]),
+        MAIN_REGIONS.map((r) => r.id).concat([
+          "#mainHost",
+          "#mainHostHeader",
+          "#mainGround",
+          "#mainCaption",
+        ]),
         { opacity: 0 },
         0,
       );
 
-      // Full canvas initial perspective swing-in, sets the stage
+      // Host (empty dashboard frame) assembles first — a subtle fade+scale
       tl.fromTo(
         "#mainCanvas",
-        { opacity: 0, scale: 1.06, y: 30 },
-        { opacity: 1, scale: 1, y: 0, duration: 1.0 },
+        { opacity: 0, scale: 1.04, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.9 },
         6.0,
       );
       tl.fromTo(
-        "#mainBg",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8, ease: "sine.out" },
-        6.2,
+        "#mainHost",
+        { opacity: 0, scale: 1.02 },
+        { opacity: 1, scale: 1, duration: 0.7, ease: "sine.out" },
+        6.05,
+      );
+      tl.fromTo(
+        "#mainHostHeader",
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "sine.out" },
+        6.25,
       );
       tl.fromTo(
         "#mainGround",
@@ -605,7 +730,7 @@
         6.0,
       );
 
-      // Stagger drop-in for each region (Microsoft Designer style: y/x/scale + opacity)
+      // Each UI layer lands onto the empty host individually (stagger 60ms).
       MAIN_REGIONS.forEach((r, i) => {
         tl.fromTo(
           r.id,
@@ -613,8 +738,8 @@
             opacity: 0,
             x: r.x,
             y: r.y,
-            scale: 0.92,
-            rotation: r.x < 0 ? -1.5 : r.x > 0 ? 1.5 : 0,
+            scale: 0.9,
+            rotation: r.x < 0 ? -1.2 : r.x > 0 ? 1.2 : 0,
           },
           {
             opacity: 1,
@@ -622,9 +747,9 @@
             y: 0,
             scale: 1,
             rotation: 0,
-            duration: 0.85,
+            duration: 0.8,
           },
-          6.5 + i * 0.12,
+          6.55 + i * 0.08,
         );
       });
 
@@ -653,38 +778,60 @@
       );
 
       // ===================== SERVER OVERVIEW (16.0 - 26.0s) =====================
+      // Granular layer-by-layer assembly onto the empty host — Microsoft Designer style.
       const SERVER_REGIONS = [
-        { id: "#s_header", x: 0, y: -40 },
-        { id: "#s_stats", x: 0, y: -25 },
-        { id: "#s_nav", x: -50, y: 0 },
-        { id: "#s_plan", x: -50, y: 30 },
-        { id: "#s_serverbar", x: 0, y: -30 },
-        { id: "#s_obzor", x: -30, y: 20 },
-        { id: "#s_info", x: -40, y: 50 },
-        { id: "#s_perf", x: 40, y: 50 },
-        { id: "#s_analytics_title", x: -30, y: 30 },
-        { id: "#s_metrics", x: 0, y: 60 },
-        { id: "#s_logo", x: 30, y: 30 },
+        { id: "#s_logo_brand",       x: -40, y: -30 },
+        { id: "#s_search",           x:   0, y: -40 },
+        { id: "#s_user",             x:  40, y: -30 },
+        { id: "#s_stat1",            x:   0, y: -30 },
+        { id: "#s_stat2",            x:   0, y: -30 },
+        { id: "#s_stat3",            x:   0, y: -30 },
+        { id: "#s_stat4",            x:  20, y: -30 },
+        { id: "#s_nav",              x: -60, y:   0 },
+        { id: "#s_plan",             x: -60, y:  40 },
+        { id: "#s_serverbar",        x:   0, y: -30 },
+        { id: "#s_obzor",            x: -30, y:  20 },
+        { id: "#s_info",             x: -40, y:  50 },
+        { id: "#s_perf",             x:  40, y:  50 },
+        { id: "#s_analytics_title",  x: -30, y:  30 },
+        { id: "#s_metric1",          x: -20, y:  60 },
+        { id: "#s_metric2",          x: -10, y:  60 },
+        { id: "#s_metric3",          x:   0, y:  60 },
+        { id: "#s_metric4",          x:   0, y:  60 },
+        { id: "#s_metric5",          x:  10, y:  60 },
+        { id: "#s_metric6",          x:  20, y:  60 },
+        { id: "#s_logo",             x:  30, y:  30 },
       ];
 
-      // Pre-hide everything in the server scene so it can drop in (anchored at t=0).
+      // Pre-hide layers + host + caption at t=0.
       tl.set(
-        SERVER_REGIONS.map((r) => r.id).concat(["#serverBg", "#serverGround", "#serverCaption"]),
+        SERVER_REGIONS.map((r) => r.id).concat([
+          "#serverHost",
+          "#serverHostHeader",
+          "#serverGround",
+          "#serverCaption",
+        ]),
         { opacity: 0 },
         0,
       );
 
       tl.fromTo(
         "#serverCanvas",
-        { opacity: 0, scale: 1.06, y: 30 },
-        { opacity: 1, scale: 1, y: 0, duration: 1.0 },
+        { opacity: 0, scale: 1.04, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.9 },
         16.0,
       );
       tl.fromTo(
-        "#serverBg",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8, ease: "sine.out" },
-        16.2,
+        "#serverHost",
+        { opacity: 0, scale: 1.02 },
+        { opacity: 1, scale: 1, duration: 0.7, ease: "sine.out" },
+        16.05,
+      );
+      tl.fromTo(
+        "#serverHostHeader",
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "sine.out" },
+        16.25,
       );
       tl.fromTo(
         "#serverGround",
@@ -706,8 +853,8 @@
             opacity: 0,
             x: r.x,
             y: r.y,
-            scale: 0.92,
-            rotation: r.x < 0 ? -1.5 : r.x > 0 ? 1.5 : 0,
+            scale: 0.9,
+            rotation: r.x < 0 ? -1.2 : r.x > 0 ? 1.2 : 0,
           },
           {
             opacity: 1,
@@ -715,9 +862,9 @@
             y: 0,
             scale: 1,
             rotation: 0,
-            duration: 0.85,
+            duration: 0.8,
           },
-          16.5 + i * 0.11,
+          16.55 + i * 0.07,
         );
       });
 
