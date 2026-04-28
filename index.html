@@ -479,7 +479,8 @@
       );
 
       // ===================== INTRO (0 - 6.5s) =====================
-      tl.set(["#introPill", "#introLogo", "#introW1", "#introW2", "#introW3", "#introS1", "#introS2", "#introS3"], { opacity: 0 });
+      // Pre-hide intro elements at t=0 (explicit position to avoid appending at timeline end).
+      tl.set(["#introPill", "#introLogo", "#introW1", "#introW2", "#introW3", "#introS1", "#introS2", "#introS3"], { opacity: 0 }, 0);
 
       // Logo drops gracefully into place
       tl.fromTo(
@@ -569,10 +570,11 @@
         { id: "#m_logo", x: 0, y: 30 },
       ];
 
-      // Pre-hide everything in the main scene so it can drop in
+      // Pre-hide everything in the main scene so it can drop in (anchored at t=0).
       tl.set(
         MAIN_REGIONS.map((r) => r.id).concat(["#mainBg", "#mainGround", "#mainCaption"]),
         { opacity: 0 },
+        0,
       );
 
       // Full canvas initial perspective swing-in, sets the stage
@@ -665,9 +667,11 @@
         { id: "#s_logo", x: 30, y: 30 },
       ];
 
+      // Pre-hide everything in the server scene so it can drop in (anchored at t=0).
       tl.set(
         SERVER_REGIONS.map((r) => r.id).concat(["#serverBg", "#serverGround", "#serverCaption"]),
         { opacity: 0 },
+        0,
       );
 
       tl.fromTo(
